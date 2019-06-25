@@ -12,6 +12,9 @@ using Protocol.Channel.Gprs;
 using System.IO;
 using Protocol.Data.ZYJBX;
 
+/// <summary>
+/// 
+/// </summary>
 namespace Protocol.Channel.Beidou
 {
     public class BeidouNormal : IBeidouNormal
