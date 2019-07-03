@@ -7,17 +7,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Timers;
-//using Protocol.Data.HJJBX;
-//using Protocol.Data.Lib;
-//using Protocol.Data.SXDZ;
-//using Protocol.Data.ZYJBX;
-//using Protocol.Data.XYJBX;
+
 
 
 namespace Protocol.Channel.HDGprs
 {
     public class HDGpesParser : IHDGprs
     {
+        public static int MAX_BUFFER = 1024;
         internal class MyMessage
         {
             public string ID;
@@ -332,25 +329,7 @@ namespace Protocol.Channel.HDGprs
                     String str = System.Text.Encoding.Default.GetString(dat.m_data_buf);
                     String strid = System.Text.Encoding.Default.GetString(dat.m_modemId);
                     String strTime = System.Text.Encoding.Default.GetString(dat.m_recv_time);
-                    //if (str.Contains("TRU"))
-                    //    {
-                    //        Debug.WriteLine("接收数据TRU完成,停止计时器");
-                    //        //m_timer.Stop();
-                    //        InvokeMessage("TRU " + strid , "接收");
-                    //        if (this.ErrorReceived != null)
-                    //            this.ErrorReceived.Invoke(null, new ReceiveErrorEventArgs()
-                    //            {
-                    //                //   Msg = "TRU " + dat.m_modemId
-                    //                Msg = "TRU " + str
-                    //            });
-                    //    }
-                    //if (str.Contains("1G21") || str.Contains("1G22") || str.Contains("1G25"))
-                    //{
-                    //    InvokeMessage("TRU " + strid, "发送");
-                    //    this.sendHex(strid.Trim(), bts, (uint)bts.Length, null);
-                    //}
                     m_mutexListDatas.WaitOne();
-                    //Debug.WriteLine("协议接收数据: " + System.Text.Encoding.Default.GetString(dat.m_data_buf));
                     if ((strid.Substring(0, 1) != "/0") && (strid.Substring(0, 1) != "\0"))
                     {
                         m_listDatas.Add(dat);
@@ -384,23 +363,8 @@ namespace Protocol.Channel.HDGprs
                     try
                     {
                         HDModemDataStruct dat = dataListTmp[i];
-                        //string data = string.Empty;
-                        string data = System.Text.Encoding.Default.GetString(dat.m_data_buf);
-                        InvokeMessage(data, "GPRS接收raw");
-                        //byte[] inputBytes = dat.m_data_buf;
-                        //int inputLength = dat.m_data_len;
-
-                        //if (inputBytes != null)
-                        //{
-                        //    for (int j = 0; j < inputBytes.Length; j++)
-                        //    {
-                        //        if (j == 1024)
-                        //        {
-                        //            inputLength = Int32.Parse(inputBytes[j].ToString()) * 2;
-                        //        }
-                        //        data += inputBytes[j].ToString("X2");
-                        //    }
-                        //}
+                        string data = System.Text.Encoding.Default.GetString(dat.m_data_buf).TrimEnd('\0');
+                        InvokeMessage(data, "数据接收-端口接收到数据，通讯成功");
 
                         string temp = data.Trim();
 
@@ -434,18 +398,42 @@ namespace Protocol.Channel.HDGprs
                         }
                         if (temp.Contains("$"))
                         {
-                            result = temp.Substring(temp.IndexOf("$"), temp.IndexOf("\0"));
+                            InvokeMessage(data, "数据接收-进入数据报解析！");
+                            result = temp.Substring(temp.IndexOf("$"));
+                            int length = int.Parse(result.Substring(11,4));
+                            //获取报文长度
+                            if(length > MAX_BUFFER)
+                            {
+                                continue;
+                            }
+
+                            result = result.Substring(0, length);
+
+                            if(!(result.StartsWith("$") && result.EndsWith("\r\n")))
+                            {
+                                InvokeMessage(result + "报文开始符结束符不合法", "接收");
+                            }
 
                             String dataProtocol = Manager.XmlStationData.Instance.GetProtocolBySId(sid);
 
                             CReportStruct report = new CReportStruct();
                             CDownConf downReport = new CDownConf();
 
+                            //时差法
+                            if (dataProtocol == "TDXY")
+                            {
+                                Up = new Data.TDXY.UpParser();
+                                Down = new Data.TDXY.DownParser();
+                            }
+
+                            //中游局协议
                             if (dataProtocol == "ZYJBX")
                             {
                                 Up = new Data.ZYJBX.UpParser();
                                 Down = new Data.ZYJBX.DownParser();
                             }
+
+                            //云南协议
                             else if (dataProtocol == "YNXY")
                             {
                                 Up = new Data.YNXY.UpParser();
@@ -473,42 +461,41 @@ namespace Protocol.Channel.HDGprs
                                 }
                             }
 
-                            if (result.Contains("1G21") || result.Contains("1G22") || result.Contains("1G25"))
+                            //数据报文解析
+                            if (result.Contains("1G"))
                             {
-                                if (result.Contains("1G29"))
-                                {
+                                //回复TRU
+                                InvokeMessage("TRU " + gprs, "发送");
+                                byte[] bts = new byte[] { 84, 82, 85, 13, 10 };
+                                this.sendHex(gprs.Trim(), bts, (uint)bts.Length, null);
 
-                                }
-                                else
+                                //根据$将字符串进行分割
+                                
+                                var lists = result.Split('$');
+                                foreach (var msg in lists)
                                 {
-                                    InvokeMessage("TRU " + gprs, "发送");
-                                    byte[] bts = new byte[] { 84, 82, 85, 13, 10 };
-                                    this.sendHex(gprs.Trim(), bts, (uint)bts.Length, null);
-                                    var lists = result.Split('$');
-                                    foreach (var msg in lists)
+                                    if (msg.Length < 10)
                                     {
-                                        if (msg.Length < 5)
+                                        continue;
+                                    }
+                                    string plusMsg = "$" + msg.TrimEnd();
+                                    Up.Parse(plusMsg, out report);
+                                    if (report != null)
+                                    {
+                                        report.ChannelType = EChannelType.GPRS;
+                                        report.ListenPort = this.GetListenPort().ToString();
+                                        report.flagId = gprs;
+                                        string rtype = report.ReportType == EMessageType.EAdditional ? "加报" : "定时报";
+                                        InvokeMessage("gprs号码:  " + gprs + "   " + String.Format("{0,-10}   ", rtype) + plusMsg, "接收");
+                                        //TODO 重新定义事件
+                                        if (this.UpDataReceived != null)
                                         {
-                                            continue;
-                                        }
-                                        string plusMsg = "$" + msg.Trim();
-                                        Up.Parse(plusMsg, out report);
-                                        if (report != null)
-                                        {
-                                            report.ChannelType = EChannelType.GPRS;
-                                            report.ListenPort = this.GetListenPort().ToString();
-                                            report.flagId = gprs;
-                                            string rtype = report.ReportType == EMessageType.EAdditional ? "加报" : "定时报";
-                                            InvokeMessage("gprs号码:  " + gprs + "   " + String.Format("{0,-10}   ", rtype) + plusMsg, "接收");
-                                            //TODO 重新定义事件
-                                            if (this.UpDataReceived != null)
-                                            {
-                                                this.UpDataReceived.Invoke(null, new UpEventArgs() { Value = report, RawData = plusMsg });
-                                            }
+                                            this.UpDataReceived.Invoke(null, new UpEventArgs() { Value = report, RawData = plusMsg });
                                         }
                                     }
                                 }
                             }
+                            //其他报文
                             else
                             {
                                 Down.Parse(result, out downReport);
