@@ -364,7 +364,7 @@ namespace Protocol.Channel.HDGprs
                     {
                         HDModemDataStruct dat = dataListTmp[i];
                         string data = System.Text.Encoding.Default.GetString(dat.m_data_buf).TrimEnd('\0');
-                        InvokeMessage(data, "数据接收-端口接收到数据，通讯成功");
+                        InvokeMessage(data, "原始数据");
 
                         string temp = data.Trim();
 
@@ -398,7 +398,6 @@ namespace Protocol.Channel.HDGprs
                         }
                         if (temp.Contains("$"))
                         {
-                            InvokeMessage(data, "数据接收-进入数据报解析！");
                             result = temp.Substring(temp.IndexOf("$"));
                             int length = int.Parse(result.Substring(11,4));
                             //获取报文长度
@@ -418,7 +417,11 @@ namespace Protocol.Channel.HDGprs
 
                             CReportStruct report = new CReportStruct();
                             CDownConf downReport = new CDownConf();
-
+                            if (dataProtocol == "RG30")
+                            {
+                                Up = new Data.RG30.UpParser();
+                                Down = new Data.RG30.DownParser();
+                            }
                             //时差法
                             if (dataProtocol == "TDXY")
                             {

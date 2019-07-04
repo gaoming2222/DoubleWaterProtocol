@@ -33,7 +33,12 @@ namespace Protocol.Data.RG30
         /// <returns>是否解析成功</returns>
         public bool Parse(String msg, out CReportStruct report)
         {
-            //$      1900020919060308101G21??????????1066@@  QTFM0164        11     0.163     1.171     2.546     0.000     0.334     0.000     0.000    -999.0      -0.2       0.0       0.0      14.7       1.5        99**
+            //2019年07月04日08时53分24秒(流速中，最高位为符号位，正数最高位为0，负数最高位为 -，小数位为三位！！！)
+            //$      0001010919070408401G2172??????????1432@@  RG300062000195000000000000000000........................**
+            //$      0001010919070408401G2172??????????1431@@  RG300062000195000000000000000000........................**
+            //$      0001010919070408451G2172??????????1432@@  RG300062000000000000000000000000........................**
+            //$      0001010919070408451G2172??????????1432@@  RG300062000000000000000000000000........................**
+            //$      0001010919070408501G2172??????????1430@@  RG300062000000000000000000000000........................**
             report = new CReportStruct();
             List<CReportData> dataList = new List<CReportData>();
             try
@@ -46,7 +51,7 @@ namespace Protocol.Data.RG30
                 }
                 //站号（4位）
                 string StationId = data.Substring(0, 10).Trim();
-                //类别（长度）：1G
+                //长度：1G
                 string length = data.Substring(10, 4);
 
                 DateTime recvTime;
@@ -64,8 +69,11 @@ namespace Protocol.Data.RG30
                 //报类（2位）：22-定时报
                 string reportTypeString = data.Substring(26, 2);
 
+                //站类
+                string stationTypeString = data.Substring(28, 2);
+
                 //水位
-                string waterStr = data.Substring(28, 6);
+                string waterStr = data.Substring(30, 6);
                 Decimal? water;
                 if (waterStr.Contains("?"))
                 {
@@ -77,7 +85,7 @@ namespace Protocol.Data.RG30
                 }
 
                 //雨量
-                string rainStr = data.Substring(34, 4);
+                string rainStr = data.Substring(36, 4);
                 Decimal? rain;
                 if (rainStr.Contains("?"))
                 {
@@ -88,7 +96,7 @@ namespace Protocol.Data.RG30
                     rain = Decimal.Parse(rainStr) / 100;
                 }
                 //电压
-                string voltageStr = data.Substring(38, 4);
+                string voltageStr = data.Substring(40, 4);
                 Decimal? voltage;
                 if (voltageStr.Contains("?"))
                 {
@@ -104,41 +112,64 @@ namespace Protocol.Data.RG30
                 reportType = ProtocolMaps.MessageTypeMap.FindKey(reportTypeString);
                 //站类
                 EStationType stationType;
-                stationType = EStationType.EO;
-                string allElmtData = data.Substring(42);
+                stationType = ProtocolMaps.StationTypeMap.FindKey(stationTypeString);
 
-                //1.处理时差法数据
+                string allElmtData = data.Substring(44);
+
+                //1.处理RG30数据
                 CReportData speedData = new CReportData();
-                int flagIndex = allElmtData.IndexOf("@@  QTFM");
+                int flagIndex = allElmtData.IndexOf("@@  RG30");
                 if (flagIndex >= 0)
                 {
                     int keyLength = int.Parse(allElmtData.Substring(8, 4));
                     string elmtData = allElmtData.Substring(flagIndex, keyLength);
                     //判定要素1的开始符号和结束符号
-                    if (elmtData.StartsWith("@@  QTFM") && elmtData.EndsWith("**"))
+                    if (elmtData.StartsWith("@@  RG30") && elmtData.EndsWith("**"))
                     {
                         elmtData = elmtData.Substring(12, keyLength - 14).Trim();
                         //判定时差法数据的开始符号和接受符号
-                        if (elmtData.StartsWith("11") && elmtData.EndsWith("99"))
+                        if (elmtData.Length % 6 == 0)
                         {
+                            List<string> elmtDataList = new List<string>();
+                            List<Nullable<Decimal>> speedList = new List<decimal?>();
+                            for (int i = 0; i < elmtData.Length / 6; i++)
+                            {
+                                elmtDataList.Add(elmtData.Substring(i * 6, 6));
+                            }
                             try
                             {
-                                elmtData = new System.Text.RegularExpressions.Regex("[\\s]+").Replace(elmtData, " ");
-                                string[] elmtDataList = elmtData.Split(' ');
-                                speedData.Voltge = voltage;
-                                speedData.Vm = Decimal.Parse(elmtDataList[1]);
-                                speedData.W1 = Decimal.Parse(elmtDataList[2]);
-                                speedData.Q = Decimal.Parse(elmtDataList[3]);
-                                speedData.v1 = Decimal.Parse(elmtDataList[4]);
-                                speedData.v2 = Decimal.Parse(elmtDataList[5]);
-                                speedData.v3 = Decimal.Parse(elmtDataList[6]);
-                                speedData.v4 = Decimal.Parse(elmtDataList[7]);
-                                speedData.beta1 = Decimal.Parse(elmtDataList[8]);
-                                speedData.beta2 = Decimal.Parse(elmtDataList[9]);
-                                speedData.beta3 = Decimal.Parse(elmtDataList[10]);
-                                speedData.beta4 = Decimal.Parse(elmtDataList[11]);
-                                speedData.W2 = Decimal.Parse(elmtDataList[12]);
-                                speedData.errorCode = elmtDataList[13];
+                                for(int i = 0; i < elmtDataList.Count; i++)
+                                {
+                                    if (elmtDataList[i].Contains("."))
+                                    {
+                                        speedList.Add(null);
+                                    }
+                                    else
+                                    {
+                                        try
+                                        {
+                                            speedList.Add(decimal.Parse(elmtDataList[i]));
+                                        }
+                                        catch(Exception e)
+                                        {
+                                            speedList.Add(null);
+                                        }
+                                    }
+                                }
+                                try
+                                {
+                                    speedData.v1 = speedList[0];
+                                    speedData.v2 = speedList[1];
+                                    speedData.v3 = speedList[2];
+                                    speedData.v4 = speedList[3];
+                                    speedData.v5 = speedList[4];
+                                    speedData.v6 = speedList[5];
+                                    speedData.v7 = speedList[6];
+                                    speedData.v8 = speedList[7];
+                                }catch(Exception ee)
+                                {
+
+                                }
                                 dataList.Add(speedData);
                             }
                             catch (Exception ee)
