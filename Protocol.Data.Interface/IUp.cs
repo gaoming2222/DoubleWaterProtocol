@@ -9,6 +9,7 @@ namespace Protocol.Data.Interface
     /// </summary>
     public interface IUp
     {
+        
         /// <summary>
         /// 解析主动上行
         /// </summary>
