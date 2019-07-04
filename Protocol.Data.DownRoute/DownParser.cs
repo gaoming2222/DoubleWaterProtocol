@@ -6,6 +6,9 @@ using System.Text;
 
 namespace Protocol.Data.DownRoute
 {
+    /// <summary>
+    /// /
+    /// </summary>
     public class DownParser : IDown
     {
         public IDown Down { get; set; }
