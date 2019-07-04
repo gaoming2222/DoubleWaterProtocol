@@ -643,6 +643,12 @@ namespace Protocol.Manager
             return null;
         }
 
+
+        public List<XmlDllInfo> GetDataDllByComOrPortList(int value, bool bIsCom = true)
+        {
+            return this.m_dllInfo.Infos;
+        }
+
         /// <summary>
         /// 获取端口或者串口的信道协议DLL,如果没有查到，返回NULL
         /// </summary>

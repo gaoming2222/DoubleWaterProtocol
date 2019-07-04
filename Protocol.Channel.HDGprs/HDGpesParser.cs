@@ -482,8 +482,8 @@ namespace Protocol.Channel.HDGprs
                                         continue;
                                     }
                                     string plusMsg = "$" + msg.TrimEnd();
-                                    Up.Parse(plusMsg, out report);
-                                    if (report != null)
+                                    bool ret = Up.Parse(plusMsg, out report);
+                                    if (ret && report != null)
                                     {
                                         report.ChannelType = EChannelType.GPRS;
                                         report.ListenPort = this.GetListenPort().ToString();

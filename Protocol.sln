@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29025.244
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol.Channel.Interface", "Protocol.Channel.Interface\Protocol.Channel.Interface.csproj", "{5608A2F2-3852-4B97-9E4E-5CF054E81326}"
 EndProject
@@ -36,6 +36,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol.Data.RG30", "Protocol.Data.RG30\Protocol.Data.RG30.csproj", "{651587DF-5546-460D-94ED-2B694C9E83D5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protoco.data.ADCP", "Protoco.data.ADCP\Protoco.data.ADCP.csproj", "{92447AE5-78B9-4FC5-9F84-78556349FB22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol.Data.DownRoute", "Protocol.Data.DownRoute\Protocol.Data.DownRoute.csproj", "{4EAC9C55-0CD1-421C-9659-9284B47D534C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -202,6 +204,18 @@ Global
 		{92447AE5-78B9-4FC5-9F84-78556349FB22}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{92447AE5-78B9-4FC5-9F84-78556349FB22}.Release|x86.ActiveCfg = Release|Any CPU
 		{92447AE5-78B9-4FC5-9F84-78556349FB22}.Release|x86.Build.0 = Release|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Debug|x86.Build.0 = Debug|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Release|x86.ActiveCfg = Release|Any CPU
+		{4EAC9C55-0CD1-421C-9659-9284B47D534C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

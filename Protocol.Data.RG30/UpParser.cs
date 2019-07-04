@@ -158,6 +158,9 @@ namespace Protocol.Data.RG30
                                 }
                                 try
                                 {
+                                    speedData.Rain = rain;
+                                    speedData.Water = water;
+                                    speedData.Voltge = voltage;
                                     speedData.v1 = speedList[0];
                                     speedData.v2 = speedList[1];
                                     speedData.v3 = speedList[2];

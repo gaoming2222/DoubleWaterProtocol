@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <OutputPath>..\..\..\bin\Debug\</OutputPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Protocol.Data.DWXY\Protocol.Data.DWXY.csproj" />
+    <ProjectReference Include="..\Protocol.Data.RG30\Protocol.Data.RG30.csproj" />
+    <ProjectReference Include="..\Protocol.Data.TDXY\Protocol.Data.TDXY.csproj" />
+    <ProjectReference Include="..\Protocol.Manager\Protocol.Manager.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Entity">
+      <HintPath>..\..\..\bin\Debug\Entity.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
