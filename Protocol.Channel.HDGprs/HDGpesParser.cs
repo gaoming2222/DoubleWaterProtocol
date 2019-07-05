@@ -465,7 +465,8 @@ namespace Protocol.Channel.HDGprs
                             }
 
                             //数据报文解析
-                            if (result.Contains("1G"))
+                            if (result.Contains("1G21") || result.Contains("1G22") || result.Contains("1G23") ||
+                                result.Contains("1G25") || result.Contains("1G29"))
                             {
                                 //回复TRU
                                 InvokeMessage("TRU " + gprs, "发送");

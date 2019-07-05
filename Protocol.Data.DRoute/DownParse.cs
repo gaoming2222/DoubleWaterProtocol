@@ -28,6 +28,7 @@ namespace Protocol.Data.DRoute
         {
             String result = String.Empty;
             String dataProtocol = Manager.XmlStationData.Instance.GetProtocolBySId(sid);
+            //RG30
             if (dataProtocol == "RG30")
             {
                 Down = new Data.RG30.DownParser();
@@ -36,6 +37,11 @@ namespace Protocol.Data.DRoute
             if (dataProtocol == "TDXY")
             {
                 Down = new Data.TDXY.DownParser();
+            }
+            //中游局协议
+            if (dataProtocol == "ZYJBX")
+            {
+                Down = new Data.ZYJBX.DownParser();
             }
             result = Down.BuildQuery(sid, cmds, ctype);
             return result;
