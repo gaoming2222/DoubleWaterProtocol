@@ -2,7 +2,7 @@
 * Copyright (c) 2019 All Rights Reserved.
 *命名空间：Protocol.Data.RG30
 *文件名： UpParser
-*创建人： XXX
+*创建人： gaom
 *创建时间：2019-7-3 19:32:21
 *描述
 *=====================================================================
@@ -140,7 +140,7 @@ namespace Protocol.Data.RG30
                             {
                                 for(int i = 0; i < elmtDataList.Count; i++)
                                 {
-                                    if (elmtDataList[i].Contains("."))
+                                    if (elmtDataList[i].Contains(".") || elmtDataList[i].Contains("-"))
                                     {
                                         speedList.Add(null);
                                     }

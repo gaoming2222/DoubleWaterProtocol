@@ -436,6 +436,15 @@ namespace Protocol.Channel.HDGprs
                                 Down = new Data.ZYJBX.DownParser();
                             }
 
+                            //蒸发协议
+                            if(dataProtocol == "ZFXY")
+                            {
+                                
+                                Up = new Data.ZFXY.UpParse();
+                                Down = new Data.ZFXY.DownParse();
+                                
+                            }
+
                             //云南协议
                             else if (dataProtocol == "YNXY")
                             {
@@ -463,10 +472,10 @@ namespace Protocol.Channel.HDGprs
                                         this.BatchDataReceived.Invoke(null, new BatchEventArgs() { Value = batch, RawData = temp });
                                 }
                             }
-
+                            //+ 代表的是蒸发报文，需要特殊处理
                             //数据报文解析
                             if (result.Contains("1G21") || result.Contains("1G22") || result.Contains("1G23") ||
-                                result.Contains("1G25") || result.Contains("1G29"))
+                                result.Contains("1G25") || result.Contains("1G29")  ||result.Contains("+"))
                             {
                                 //回复TRU
                                 InvokeMessage("TRU " + gprs, "发送");
