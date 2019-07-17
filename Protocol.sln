@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protoco.data.ADCP", "Protoc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol.Data.DRoute", "Protocol.Data.DRoute\Protocol.Data.DRoute.csproj", "{3BE5428A-4A4F-408E-A4CD-37ABCD5FC90D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Protocol.Data.SM100H", "Protocol.Data.SM100H\Protocol.Data.SM100H.csproj", "{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -216,6 +218,18 @@ Global
 		{3BE5428A-4A4F-408E-A4CD-37ABCD5FC90D}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{3BE5428A-4A4F-408E-A4CD-37ABCD5FC90D}.Release|x86.ActiveCfg = Release|Any CPU
 		{3BE5428A-4A4F-408E-A4CD-37ABCD5FC90D}.Release|x86.Build.0 = Release|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Debug|x86.Build.0 = Debug|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Release|x86.ActiveCfg = Release|Any CPU
+		{73A7A6C5-2645-4663-979E-5B6DBF8D8BA2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
