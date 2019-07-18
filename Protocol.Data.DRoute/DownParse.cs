@@ -43,6 +43,10 @@ namespace Protocol.Data.DRoute
             {
                 Down = new Data.ZYJBX.DownParser();
             }
+            if (dataProtocol == "SM100H")
+            {
+                Down = new Data.SM100H.DownParser();
+            }
             result = Down.BuildQuery(sid, cmds, ctype);
             return result;
         }
@@ -50,20 +54,86 @@ namespace Protocol.Data.DRoute
         //  数据下行设置
         public String BuildSet(string sid, IList<EDownParam> cmds, CDownConf down, EChannelType ctype)
         {
-            return "";
+            String result = String.Empty;
+            String dataProtocol = Manager.XmlStationData.Instance.GetProtocolBySId(sid);
+            //RG30
+            if (dataProtocol == "RG30")
+            {
+                Down = new Data.RG30.DownParser();
+            }
+            //时差法
+            if (dataProtocol == "TDXY")
+            {
+                Down = new Data.TDXY.DownParser();
+            }
+            //中游局协议
+            if (dataProtocol == "ZYJBX")
+            {
+                Down = new Data.ZYJBX.DownParser();
+            }
+            if (dataProtocol == "SM100H")
+            {
+                Down = new Data.SM100H.DownParser();
+            }
+            result = Down.BuildSet(sid, cmds, down,ctype);
+            return result;
         }
 
         //  批量数据Flash下行
         public String BuildQuery_Flash(string sid, EStationType stationType, ETrans trans, DateTime beginTime, DateTime endTime, EChannelType ctype)
         {
 
-            return "";
+            String result = String.Empty;
+            String dataProtocol = Manager.XmlStationData.Instance.GetProtocolBySId(sid);
+            //RG30
+            if (dataProtocol == "RG30")
+            {
+                Down = new Data.RG30.DownParser();
+            }
+            //时差法
+            if (dataProtocol == "TDXY")
+            {
+                Down = new Data.TDXY.DownParser();
+            }
+            //中游局协议
+            if (dataProtocol == "ZYJBX")
+            {
+                Down = new Data.ZYJBX.DownParser();
+            }
+            if (dataProtocol == "SM100H")
+            {
+                Down = new Data.SM100H.DownParser();
+            }
+            result = Down.BuildQuery_Flash(sid, stationType, trans, beginTime, endTime,ctype);
+            return result;
         }
 
         //  批量数据主板下行
         public String BuildQuery_Batch(string sid, ETrans trans, DateTime beginTime, EChannelType ctype)
         {
-            return null;
+            String result = String.Empty;
+            String dataProtocol = Manager.XmlStationData.Instance.GetProtocolBySId(sid);
+            //RG30
+            if (dataProtocol == "RG30")
+            {
+                Down = new Data.RG30.DownParser();
+            }
+            //时差法
+            if (dataProtocol == "TDXY")
+            {
+                Down = new Data.TDXY.DownParser();
+            }
+            //中游局协议
+            if (dataProtocol == "ZYJBX")
+            {
+                Down = new Data.ZYJBX.DownParser();
+            }
+            if (dataProtocol == "SM100H")
+            {
+                Down = new Data.SM100H.DownParser();
+            }
+            result = Down.BuildQuery_Batch(sid,  trans, beginTime, ctype);
+            return result;
         }
 
         /// <summary>
@@ -76,7 +146,29 @@ namespace Protocol.Data.DRoute
         /// <returns></returns>
         public String BuildQuery_SD(string sid, DateTime beginTime, EChannelType ctype)
         {
-            return "";
+            String result = String.Empty;
+            String dataProtocol = Manager.XmlStationData.Instance.GetProtocolBySId(sid);
+            //RG30
+            if (dataProtocol == "RG30")
+            {
+                Down = new Data.RG30.DownParser();
+            }
+            //时差法
+            if (dataProtocol == "TDXY")
+            {
+                Down = new Data.TDXY.DownParser();
+            }
+            //中游局协议
+            if (dataProtocol == "ZYJBX")
+            {
+                Down = new Data.ZYJBX.DownParser();
+            }
+            if (dataProtocol == "SM100H")
+            {
+                Down = new Data.SM100H.DownParser();
+            }
+            result = Down.BuildQuery_SD(sid,beginTime, ctype);
+            return result;
         }
 
         //  数据下行解析

@@ -422,6 +422,12 @@ namespace Protocol.Channel.HDGprs
                                 Up = new Data.RG30.UpParser();
                                 Down = new Data.RG30.DownParser();
                             }
+
+                            if(dataProtocol == "SM100H")
+                            {
+                                Up = new Data.SM100H.UpParser();
+                                Down = new Data.SM100H.DownParser();
+                            }
                             //时差法
                             if (dataProtocol == "TDXY")
                             {
@@ -442,7 +448,6 @@ namespace Protocol.Channel.HDGprs
                                 
                                 Up = new Data.ZFXY.UpParse();
                                 Down = new Data.ZFXY.DownParse();
-                                
                             }
 
                             //云南协议

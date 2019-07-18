@@ -58,6 +58,10 @@
       <Project>{651587df-5546-460d-94ed-2b694c9e83d5}</Project>
       <Name>Protocol.Data.RG30</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Protocol.Data.SM100H\Protocol.Data.SM100H.csproj">
+      <Project>{73a7a6c5-2645-4663-979e-5b6dbf8d8ba2}</Project>
+      <Name>Protocol.Data.SM100H</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Protocol.Data.TDXY\Protocol.Data.TDXY.csproj">
       <Project>{c1a9688d-700b-4863-bb47-5b2281686355}</Project>
       <Name>Protocol.Data.TDXY</Name>
