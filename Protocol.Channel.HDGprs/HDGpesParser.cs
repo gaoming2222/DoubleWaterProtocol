@@ -364,6 +364,8 @@ namespace Protocol.Channel.HDGprs
                     {
                         HDModemDataStruct dat = dataListTmp[i];
                         string data = System.Text.Encoding.Default.GetString(dat.m_data_buf).TrimEnd('\0');
+                        string recvData = data.Trim();
+
                         InvokeMessage(data, "原始数据");
 
                         string temp = data.Trim();
@@ -450,8 +452,14 @@ namespace Protocol.Channel.HDGprs
                                 Down = new Data.ZFXY.DownParse();
                             }
 
+                            if(dataProtocol == "EN2B")
+                            {
+                                Up = new Data.EN2B.UpParser();
+                                Down = new Data.EN2B.DownParser();
+                            }
+
                             //云南协议
-                            else if (dataProtocol == "YNXY")
+                            if (dataProtocol == "YNXY")
                             {
                                 Up = new Data.YNXY.UpParser();
                                 Down = new Data.YNXY.DownParser();
