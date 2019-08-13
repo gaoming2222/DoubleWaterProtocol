@@ -91,47 +91,39 @@ namespace Protocol.Data.EN2B
 
                 string allElmtData = data.Substring(44);
 
-                //1.处理SM100H数据
+                //1.处理风速风向数据和散射仪数据
                 CReportData speedData = new CReportData();
-                int flagIndex = allElmtData.IndexOf("@@SM100H");
+                //1.1 风速风向信息
+                int flagIndex = allElmtData.IndexOf("@@  EN2B");
                 if (flagIndex >= 0)
                 {
                     int keyLength = int.Parse(allElmtData.Substring(8, 4));
                     string elmtData = allElmtData.Substring(flagIndex, keyLength);
                     //判定要素1的开始符号和结束符号
-                    if (elmtData.StartsWith("@@SM100H") && elmtData.EndsWith("**"))
+                    if (elmtData.StartsWith("@@  EN2B") && elmtData.EndsWith("**"))
                     {
                         elmtData = elmtData.Substring(12, keyLength - 14).Trim();
                         //判定时差法数据的开始符号和接受符号
-                        if (elmtData.Length == 78)
+                        if (elmtData.Length == (keyLength - 14))
                         {
 
                             try
                             {
-                                string waterSpeedStr = elmtData.Substring(38, 8);
-                                string waterFlowStr = elmtData.Substring(48, 8);
-                                string waterFlow2Str = elmtData.Substring(58, 8);
-
-                                //字符串转16进制32位无符号整数
-                                UInt32 waterSpeedInt = Convert.ToUInt32(waterSpeedStr, 16);
-                                UInt32 waterFlowInt = Convert.ToUInt32(waterFlowStr, 16);
-                                UInt32 waterFlow2Int = Convert.ToUInt32(waterFlow2Str, 16);
-
-                                //IEEE754 字节转换float
-                                float waterSpeed = BitConverter.ToSingle(BitConverter.GetBytes(waterSpeedInt), 0);
-                                float waterFlow = BitConverter.ToSingle(BitConverter.GetBytes(waterFlowInt), 0);
-                                float waterFlow2 = BitConverter.ToSingle(BitConverter.GetBytes(waterFlow2Int), 0);
-
-                                //UInt32 x = Convert.ToUInt32(waterFlowStr, 16);//字符串转16进制32位无符号整数
-                                //float fy = BitConverter.ToSingle(BitConverter.GetBytes(x), 0);//IEEE754 字节转换float
-                                //UInt32 x2 = Convert.ToUInt32(waterFlow2Str, 16);//字符串转16进制32位无符号整数
-                                //float fy2 = BitConverter.ToSingle(BitConverter.GetBytes(x2), 0);//IEEE754 字节转换float
-                                speedData.v1 = (decimal?)waterSpeed;
-                                speedData.Q = (decimal?)waterFlow;
-                                speedData.Q2 = (decimal?)waterFlow2;
-                                speedData.Voltge = voltage;
-                                dataList.Add(speedData);
-
+                                string strtflag = elmtData.Substring(0, 1);//开始标志
+                                string stationid = elmtData.Substring(1, 5);//站点ID
+                                string msgTime = elmtData.Substring(6, 12);//时间
+                                string shfx = elmtData.Substring(18, 4);//瞬时风向
+                                string shfs = elmtData.Substring(22, 4);//顺时风速
+                                string yxszdshfx = elmtData.Substring(26, 4);//一小时最大瞬时风向
+                                string yxszdshfs = elmtData.Substring(30, 4);//一小时最大瞬时风速
+                                string maxTime = elmtData.Substring(34, 4); //一小时最大瞬时风速出现时间
+                                string avg2fx = elmtData.Substring(38, 4); //2分钟平均风向
+                                string avg2fs = elmtData.Substring(42, 4);//2分钟平均风速
+                                string avg10fx = elmtData.Substring(46, 4);//10分钟平均风向
+                                string avg10fs = elmtData.Substring(50, 4);//10分钟平均风速
+                                string max10fx = elmtData.Substring(54, 4);//10分钟平均最大风向
+                                string max10fs = elmtData.Substring(58, 4);//10分钟平均最大风速
+                                string max10tm = elmtData.Substring(62, 4);//10分钟最大风速出现时间
 
                             }
                             catch (Exception e)
@@ -156,6 +148,17 @@ namespace Protocol.Data.EN2B
                     {
                         return false;
                         //TODO 要素1开始符号和结束符合不匹配
+                    }
+                }
+                //1.2 散射仪数据
+                int flagIndex2 = allElmtData.IndexOf("@@   PWD");
+                if (flagIndex >= 0)
+                {
+                    int keyLength = int.Parse(allElmtData.Substring(8, 4));
+                    string elmtData = allElmtData.Substring(flagIndex, keyLength);
+                    if (elmtData.StartsWith("@@  EN2B") && elmtData.EndsWith("**"))
+                    {
+
                     }
                 }
 
