@@ -457,7 +457,11 @@ namespace Protocol.Channel.HDGprs
                                 Up = new Data.EN2B.UpParser();
                                 Down = new Data.EN2B.DownParser();
                             }
-
+                            if (dataProtocol == "OBS")
+                            {
+                                Up = new Protocol.Data.OBS.UpParser();
+                                Down = new Protocol.Data.OBS.DownParser();
+                            }
                             //云南协议
                             if (dataProtocol == "YNXY")
                             {

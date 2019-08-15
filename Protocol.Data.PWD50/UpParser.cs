@@ -5,19 +5,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Protocol.Data.EN2B
+namespace Protocol.Data.PWD50
 {
-    public class UpParser : IUp
+    class UpParser : IUp
     {
-
         public static Dictionary<String, CEntityPackage> cEntityPackage = new Dictionary<string, CEntityPackage>();
 
         public bool Parse(string msg, out CReportStruct report)
         {
             report = new CReportStruct();
             List<CReportData> dataList = new List<CReportData>();
-            List<CReportPwdData> dataPwdList = new List<CReportPwdData>();
-            List<CReportFsfx> dataFsfxList = new List<CReportFsfx>();
             try
             {
                 string data = string.Empty;
@@ -91,22 +88,15 @@ namespace Protocol.Data.EN2B
                 EStationType stationType;
                 stationType = ProtocolMaps.StationTypeMap.FindKey(stationTypeString);
 
-                report.Stationid = StationId;
-                report.Type = type;
-                report.ReportType = reportType;
-                report.StationType = stationType;
-                report.RecvTime = recvTime;
-
                 string allElmtData = data.Substring(44);
+
                 //1.处理风速风向数据和散射仪数据
                 CReportData speedData = new CReportData();
-                CReportPwdData pwdData = new CReportPwdData();
-                CReportFsfx fsfxData = new CReportFsfx();
                 //1.1 风速风向信息
                 int flagIndex = allElmtData.IndexOf("@@  EN2B");
                 if (flagIndex >= 0)
                 {
-                    int keyLength = int.Parse(allElmtData.Substring(flagIndex + 8, 4));
+                    int keyLength = int.Parse(allElmtData.Substring(8, 4));
                     string elmtData = allElmtData.Substring(flagIndex, keyLength);
                     //判定要素1的开始符号和结束符号
                     if (elmtData.StartsWith("@@  EN2B") && elmtData.EndsWith("**"))
@@ -115,7 +105,7 @@ namespace Protocol.Data.EN2B
                         //判定时差法数据的开始符号和接受符号
                         if (elmtData.Length == (keyLength - 14))
                         {
-                            CReportFsfx dataFsfx = new CReportFsfx();
+
                             try
                             {
                                 string strtflag = elmtData.Substring(0, 1);//开始标志
@@ -134,19 +124,6 @@ namespace Protocol.Data.EN2B
                                 string max10fs = elmtData.Substring(58, 4);//10分钟平均最大风速
                                 string max10tm = elmtData.Substring(62, 4);//10分钟最大风速出现时间
 
-                                fsfxData.shfx = decimal.Parse(shfx);
-                                fsfxData.shfs = decimal.Parse(shfx) / 10;
-                                fsfxData.yxszdshfx = decimal.Parse(yxszdshfx);
-                                fsfxData.yxszdshfs = decimal.Parse(shfx) / 10;
-                                fsfxData.maxTime = new DateTime(recvTime.Year, recvTime.Month, recvTime.Day, int.Parse(maxTime.Substring(0, 2)), int.Parse(maxTime.Substring(2, 2)), 0);
-                                fsfxData.avg2fx = decimal.Parse(avg2fx);
-                                fsfxData.avg2fs = decimal.Parse(avg2fs) / 10;
-                                fsfxData.avg10fx = decimal.Parse(avg10fx);
-                                fsfxData.avg10fs = decimal.Parse(avg10fs) / 10;
-                                fsfxData.max10fx = decimal.Parse(max10fx);
-                                fsfxData.max10fs = decimal.Parse(max10fs) / 10;
-                                fsfxData.max10tm = new DateTime(recvTime.Year, recvTime.Month, recvTime.Day, int.Parse(max10tm.Substring(0, 2)), int.Parse(max10tm.Substring(2, 2)), 0);
-                                dataFsfxList.Add(fsfxData);
                             }
                             catch (Exception e)
                             {
@@ -159,7 +136,12 @@ namespace Protocol.Data.EN2B
                             return false;
                             //11开头  99结束
                         }
-                        report.fsfxDatas = dataFsfxList;
+                        report.Stationid = StationId;
+                        report.Type = type;
+                        report.ReportType = reportType;
+                        report.StationType = stationType;
+                        report.RecvTime = recvTime;
+                        report.Datas = dataList;
                     }
                     else
                     {
@@ -168,30 +150,19 @@ namespace Protocol.Data.EN2B
                     }
                 }
                 //1.2 散射仪数据
-                //015057203031023033202F2F2F2F2F2F202F2F2F2F2F030D0A
                 int flagIndex2 = allElmtData.IndexOf("@@   PWD");
-                if (flagIndex2 >= 0)
+                if (flagIndex >= 0)
                 {
-                    int keyLength = int.Parse(allElmtData.Substring(flagIndex2+8, 4));
-                    string elmtData = allElmtData.Substring(flagIndex2, keyLength);
-                    if (elmtData.StartsWith("@@   PWD") && elmtData.EndsWith("**"))
+                    int keyLength = int.Parse(allElmtData.Substring(8, 4));
+                    string elmtData = allElmtData.Substring(flagIndex, keyLength);
+                    if (elmtData.StartsWith("@@  EN2B") && elmtData.EndsWith("**"))
                     {
-                        elmtData = elmtData.Substring(12, keyLength - 14).Trim();
-                        elmtData = elmtData.Substring(0, elmtData.Length-1).Trim();
-                        elmtData = new System.Text.RegularExpressions.Regex("[\\s]+").Replace(elmtData, " ");
-                        string[] elmtDataList = elmtData.Split(' ');
-                        pwdData.Visi1min = decimal.Parse(elmtDataList[2].Trim());
-                        pwdData.Visi10min = decimal.Parse(elmtDataList[3]);
-                        dataPwdList.Add(pwdData);
+
                     }
-                    else
-                    {
-                        return false;
-                    }
-                    
-                    report.pwdDatas = dataPwdList;
-                    //report.Datas = dataList;
                 }
+
+
+
             }
             catch (Exception eee)
             {
